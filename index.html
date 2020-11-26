@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel = 'stylesheet' href = 'styles.css'>
+    <title>Schedule Planner</title>
+</head>
+
+<body>
+
+    <h1 class = 'inputheaders'>To-Do List</h1>
+
+    <div id = 'job1' class = 'jobdivs'>
+        <input type = 'text' id = 'job1name' class = 'jobnames' placeholder="Job Name">
+        <input type = 'text' id = 'job1time' class = 'jobnames' placeholder="Time Required">
+        <img src = 'x-icon.png' class = 'job_deletor' id = 'job_deletor'>
+    </div>
+   
+    <div id = 'jobadder' class = 'jobs'>
+        <img src = "plus-sign.png" id = 'plus-sign' alt = 'add job'>
+    </div> 
+
+    <div id = 'optionalHolder' class = 'jobs'>
+        <h1 class = 'result'>Additional Options</h1>
+        Max Breaks <input id = 'maxbreaks' class = 'additionalInputs'>
+        <br>
+        Min Breaks <input id = 'minbreaks' class = 'additionalInputs'>
+        <br>
+        <i id = 'option_disclaimer'>Min and Max break values will be used if possible.</i>
+    </div>
+    
+    <br>
+    <h1 id = 'toggleText' class = 'result'>Break between Tasks?</h1>
+    <!-- Rounded switch -->
+    <label class="switch">
+        <input type="checkbox" id = 'jobCheckBox' onclick="toggleTaskBreaks()">
+        <span class="slider round"></span>
+    </label>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h1 class = 'inputheaders'>Time</h1>
+    <div id = 'time' class = 'jobs'>
+        <input type = 'text' id = 'timefield' class = 'jobnames' placeholder="Total Minutes">
+    </div>
+    <br>
+    <br>
+    <br>
+    <button id = 'go' class = 'jobs' onclick="go()">GO</button>
+    <br>
+    <br>
+    <h3 id = 'resultHeader'>Result:</h3>
+    <span id = 'resultSentence' class = 'result'>Press GO to see results</span>
+    <div id = 'joblistdiv' class = 'joblist'>
+        <p class = 'result' id = "list"></p>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+
+
