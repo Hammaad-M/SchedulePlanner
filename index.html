@@ -2,6 +2,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <script src = "https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel = 'stylesheet' href = 'styles.css'>
     <title>Schedule Planner</title>
@@ -43,7 +44,6 @@
         <input type="checkbox" id = 'jobCheckBox' onclick="toggleTaskBreaks()">
         <span class="slider round"></span>
     </label>
-
     <br>
     <br>
     <br>
@@ -57,12 +57,20 @@
     <button id = 'go' class = 'jobs' onclick="go()">GO</button>
     <br>
     <br>
+    <div id = "charts">
+        <div class = "chartHolders">
+            <canvas id = "totalsChart"></canvas>
+        </div>
+        <div id = "x" class = "chartHolders">
+            <canvas id = "jobsChart"></canvas>
+        </div>
+    </div>
     <h3 id = 'resultHeader'>Result:</h3>
     <span id = 'resultSentence' class = 'result'>Press GO to see results</span>
-    <div id = 'joblistdiv' class = 'joblist'>
+    <div id = 'joblistdiv'>
         <p class = 'result' id = "list"></p>
     </div>
-    
+
     <script src="app.js"></script>
 </body>
 
