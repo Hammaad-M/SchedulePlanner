@@ -206,7 +206,7 @@ div#joblistdiv {
     left: -238px;
     margin: auto;
     width: 50%;
-    height: 350px;
+    height: relative;
     padding: 10px;
     
 }
@@ -236,4 +236,19 @@ div#joblistdiv {
 .helpText {
     font-family: Gill Sans Extrabold, sans-serif;
     color: white;
+}
+
+.chartHolders {
+    width: 450px;
+    height: 400px;
+    float: right;
+}
+
+
+
+#charts {
+    float: right;
+    width: 900px;
+    height: 300px;
+    padding: 10px;
 }
