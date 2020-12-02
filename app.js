@@ -237,91 +237,7 @@ function createSubsets(numbers, target) {
 
     return result;
 }
-
-function getResults(jobs, time, record, jobtimes, totalJobTime, taskbreaks, totalBreakTime) {
-    let maxBreaks = Math.floor(document.getElementById('maxbreaks').value);
-    let minBreaks = Math.floor(document.getElementById('minbreaks').value);
-    minBreaks  == "" ? minBreaks = 1 : minBreaks = minBreaks;
-    maxBreaks == "" ? maxBreaks = totalJobTime : maxBreaks = maxBreaks;
-    let minBreaktime = 5;
-    let totalFreeTime = time - totalJobTime;
-    let resultSentence = document.getElementById('resultSentence');
-    let nullBreakFailSafe = false;
-    let leftover = 0;
-    for (let i = jobtimes.length-1; i >=0; i--) {
-        jobtimes[i] = Math.floor(jobtimes[i]);
-    }
-    let idealBreaktime = 0;
-    if (numJobs == 1) {
-        let list = document.getElementById("list");
-        list.innerHTML = "";
-        resultSentence.innerHTML = "";
-        resultSentence.innerHTML = "Take a " + totalBreakTime + " minute break after " + totalJobTime + " minutes.";
-        $('#list').append(("1. " + jobs[0] + " (" + jobtimes[0] + "). <br>"));
-        $('#list').append("TAKE A BREAK! (" + totalBreakTime + ")");
-        return;
-    }
-    if (!taskbreaks) {
-        idealJobSets = getIdealJobSum(totalJobTime, jobtimes, minBreaks, maxBreaks);
-        idealBreaktime = getIdealBreakTime(jobSets, totalJobTime, totalBreakTime);
-        leftover = totalJobTime - (idealJobSets*(numBreaks));
-        result = createSubsets(jobtimes, idealJobSets)
-        //console.log('result ' + JSON.stringify(result));
-        //console.log('jobsets: ' + idealJobSets);
-        //console.log('numBreaks: ' + numBreaks);
-        //console.log('totalBreaktime: ' + totalFreeTime);
-        //console.log('idealBreaktime: ' + idealBreaktime);
-        //console.log("leftovers: " + leftover);
-        if (idealJobSets == 0) {
-            numBreaks = 1;
-            nullBreakFailSafe = true;
-        }
-    } else {
-        maxBreaks == totalJobTime ? maxBreaks/=2 : maxBreaks = maxBreaks;
-        let outlier = 10.0^100.0;
-        let currentOutlier = 0.0;
-        numBreaks = 0;
-        for (let i = minBreaks+1; i<= maxBreaks+1; i++) {
-            a = totalJobTime/i;
-            currentOutlier = totalJobTime/a;
-            if (currentOutlier<outlier) {
-                idealJobSets = a; 
-                outlier = currentOutlier;
-                numBreaks = i-1;
-            }
-                
-        }
-        console.log("numBreaks " + numBreaks);
-        idealBreaktime = totalBreakTime/numBreaks;
-        console.log('idealbreaktime: ' + idealBreaktime);
-        console.log('idealJobSet: ' + idealJobSets);
-    }
-    console.log("numBreaks " + numBreaks);
-    if (numBreaks != 1) {
-        console.log("EVENT outlier: " + leftover);
-        if (leftover> 0) {
-            resultSentence.innerHTML = "Take a " + Math.floor(idealBreaktime-leftover) + " minute break after " + Math.round(idealJobSets) + ". Then take a " + idealBreaktime + " minute break after every " + Math.round(idealJobSets) + " minutes...which is " + numBreaks + " breaks.";
-        } else {
-            resultSentence.innerHTML = "Take a " + idealBreaktime + " minute break after every " + Math.round(idealJobSets) + " minutes...which is " + numBreaks + " breaks.";
-        }
-    } else {
-        if (leftover> 0) {
-            //console.log("EVENT outlier: " + leftover);
-            nullBreakFailSafe == true ? resultSentence.innerHTML = "Take a " + Math.floor(totalFreeTime) + " minute break after " + Math.round(leftover) + " minutes."
-            : "Take a " + Math.floor(totalFreeTime) + " minute break after " + Math.round(idealJobSets) + " minutes. Before continuing for another " + Math.round(leftover) + " minutes."
-        } else {
-            resultSentence.innerHTML = "Take a " + totalFreeTime + " minute break after " + Math.round(idealJobSets) + " minutes.";
-        }
-    }
-    let jobnames = [];
-    for (let i = 0; i< jobtimes.length; i++) {
-        for (let a = 0; a < record.length; a+=2) {
-            if (record[a] == jobtimes[i]) {
-                jobnames.push(record[a+1]);
-                record.splice(a, 2);
-            }
-        }
-    }
+function editList(jobnames, idealBreaktime, nullBreakFailSafe, leftover) {
     let list = document.getElementById("list");
     list.innerHTML = "";
     let sum = 0;
@@ -361,6 +277,145 @@ function getResults(jobs, time, record, jobtimes, totalJobTime, taskbreaks, tota
             }  
         }   
     }
+}
+function chartResults(totalJobTime, totalFreeTime, jobtimes, jobnames){
+    const totalsCanvas = document.getElementById('totalsChart').getContext('2d');
+    const jobsCanvas = document.getElementById('jobsChart').getContext('2d');
+    const totalsData = {
+        datasets: [{
+            data: [totalJobTime, totalFreeTime],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.9)',
+                'rgba(0, 90, 100, 0.9)'
+            ]
+        }],
+        labels: [
+            'Total Job Time',
+            'Total Break Time'
+        ]
+    };
+    const jobsData = {
+        datasets: [{
+            data: jobtimes,
+            backgroundColor: [
+                'rgba(100, 12, 89, 0.9)',
+                'rgba(0, 120, 100, 0.9)'
+            ]
+        }],
+        labels: jobnames
+    }
+    const options = {
+        legend: {
+            labels: {
+                fontColor: "white",
+                fontSize: 18
+            }
+        }
+    }
+    const totalsChart = new Chart(totalsCanvas, {
+        type: 'pie',
+        data: totalsData,
+        options: options
+    });
+
+    const jobsChart = new Chart(jobsCanvas, {
+        type: 'pie',
+        data: jobsData,
+        options: options
+    })
+
+}
+function getResults(jobs, time, record, jobtimes, totalJobTime, taskbreaks, totalBreakTime) {
+    console.log("HELLO");
+    let maxBreaks = Math.floor(document.getElementById('maxbreaks').value);
+    let minBreaks = Math.floor(document.getElementById('minbreaks').value);
+    minBreaks  == "" ? minBreaks = 1 : minBreaks = minBreaks;
+    maxBreaks == "" ? maxBreaks = totalJobTime : maxBreaks = maxBreaks;
+    let minBreaktime = 5;
+    let totalFreeTime = time - totalJobTime;
+    let resultSentence = document.getElementById('resultSentence');
+    let nullBreakFailSafe = false;
+    let leftover = 0;
+    for (let i = jobtimes.length-1; i >=0; i--) {
+        jobtimes[i] = Math.floor(jobtimes[i]);
+    }
+    let idealBreaktime = 0;
+    if (numJobs != 1) {
+        if (!taskbreaks) {
+            idealJobSets = getIdealJobSum(totalJobTime, jobtimes, minBreaks, maxBreaks);
+            idealBreaktime = getIdealBreakTime(jobSets, totalJobTime, totalBreakTime);
+            leftover = totalJobTime - (idealJobSets*(numBreaks));
+            result = createSubsets(jobtimes, idealJobSets)
+            //console.log('result ' + JSON.stringify(result));
+            //console.log('jobsets: ' + idealJobSets);
+            //console.log('numBreaks: ' + numBreaks);
+            //console.log('totalBreaktime: ' + totalFreeTime);
+            //console.log('idealBreaktime: ' + idealBreaktime);
+            //console.log("leftovers: " + leftover);
+            if (idealJobSets == 0) {
+                numBreaks = 1;
+                nullBreakFailSafe = true;
+            }
+        } else {
+            maxBreaks == totalJobTime ? maxBreaks/=2 : maxBreaks = maxBreaks;
+            let outlier = 10.0^100.0;
+            let currentOutlier = 0.0;
+            numBreaks = 0;
+            for (let i = minBreaks+1; i<= maxBreaks+1; i++) {
+                a = totalJobTime/i;
+                currentOutlier = totalJobTime/a;
+                if (currentOutlier<outlier) {
+                    idealJobSets = a; 
+                    outlier = currentOutlier;
+                    numBreaks = i-1;
+                }
+                    
+            }
+            console.log("numBreaks " + numBreaks);
+            idealBreaktime = totalBreakTime/numBreaks;
+            console.log('idealbreaktime: ' + idealBreaktime);
+            console.log('idealJobSet: ' + idealJobSets);
+        }
+        console.log("numBreaks " + numBreaks);
+        if (numBreaks != 1) {
+            console.log("EVENT outlier: " + leftover);
+            if (leftover> 0) {
+                resultSentence.innerHTML = "Take a " + Math.floor(idealBreaktime-leftover) + " minute break after " + Math.round(idealJobSets) + ". Then take a " + idealBreaktime + " minute break after every " + Math.round(idealJobSets) + " minutes...which is " + numBreaks + " breaks.";
+            } else {
+                resultSentence.innerHTML = "Take a " + idealBreaktime + " minute break after every " + Math.round(idealJobSets) + " minutes...which is " + numBreaks + " breaks.";
+            }
+        } else {
+            if (leftover> 0) {
+                //console.log("EVENT outlier: " + leftover);
+                nullBreakFailSafe == true ? resultSentence.innerHTML = "Take a " + Math.floor(totalFreeTime) + " minute break after " + Math.round(leftover) + " minutes."
+                : "Take a " + Math.floor(totalFreeTime) + " minute break after " + Math.round(idealJobSets) + " minutes. Before continuing for another " + Math.round(leftover) + " minutes."
+            } else {
+                resultSentence.innerHTML = "Take a " + totalFreeTime + " minute break after " + Math.round(idealJobSets) + " minutes.";
+            }
+        }
+    } else {
+        let list = document.getElementById("list");
+        list.innerHTML = "";
+        resultSentence.innerHTML = "";
+        resultSentence.innerHTML = "Take a " + totalBreakTime + " minute break after " + totalJobTime + " minutes.";
+        $('#list').append(("1. " + jobs[0] + " (" + jobtimes[0] + "). <br>"));
+        $('#list').append("TAKE A BREAK! (" + totalBreakTime + ")");
+    }
+    let jobnames = [];
+    for (let i = 0; i< jobtimes.length; i++) {
+        for (let a = 0; a < record.length; a+=2) {
+            if (record[a] == jobtimes[i]) {
+                jobnames.push(record[a+1]);
+                record.splice(a, 2);
+            }
+        }
+    }
+    console.log("go");
+    console.log(jobnames, jobtimes);
+    editList(jobnames, idealBreaktime, nullBreakFailSafe, leftover);
+    console.log("hello");
+    chartResults(totalJobTime, totalFreeTime, jobtimes, jobnames);
+    
 
 
 }
