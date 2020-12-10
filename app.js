@@ -286,7 +286,10 @@ function chartResults(totalJobTime, totalFreeTime, jobtimes, jobnames){
             data: [totalJobTime, totalFreeTime],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.9)',
-                'rgba(0, 90, 100, 0.9)'
+                'rgba(0, 90, 100, 0.9)',
+                'rgba(100, 60, 20, 0.9),
+                'rgba(50, 136, 90, 0.9),
+                'rgba(88, 144, 99, 0.9)
             ]
         }],
         labels: [
@@ -299,7 +302,10 @@ function chartResults(totalJobTime, totalFreeTime, jobtimes, jobnames){
             data: jobtimes,
             backgroundColor: [
                 'rgba(100, 12, 89, 0.9)',
-                'rgba(0, 120, 100, 0.9)'
+                'rgba(0, 120, 100, 0.9)',
+                'rgba(50, 90, 100, 0.9),
+                'rgba(0, 12, 180, 0.9),
+                'rgba(99, 200, 0, 0.9)
             ]
         }],
         labels: jobnames
