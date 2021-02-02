@@ -103,7 +103,7 @@ body {
 }
 
 #optionalHolder {
-
+    color: black;
     padding-right: 15px;
     width : 170px;
     float: right;
